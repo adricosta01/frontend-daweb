@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import "../stylesheets/Login.css"
+import { useNavigate } from 'react-router-dom';
 
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const navigate = useNavigate('');
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log('Login attempted with:', { username, password });
@@ -24,16 +26,25 @@ function Login() {
       
         try {
           const response = await fetch(url, {
-            mode: 'no-cors',
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded", // Tipo de contenido para formularios
             },
             body: data, // Cuerpo en formato URL-encoded
           });
-      
-          const result = await response.data(); // Procesa la respuesta como JSON
-          console.log("Success:", result);
+          
+         if(response.ok){
+          const data = await response.json();
+
+          // Acceder a los datos
+          const { idUsuario, rol, token, nombreUsuario } = data;
+          sessionStorage.setItem("idUsuario", idUsuario);
+          sessionStorage.setItem("rol", rol); 
+          sessionStorage.setItem("token", token); 
+          sessionStorage.setItem("nombreUsuario", nombreUsuario);
+          
+
+         }
         } catch (error) {
           console.error("Error:", error);
         }
